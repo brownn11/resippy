@@ -6,27 +6,6 @@ from IPython.display import clear_output
 from IPython.display import display
 
 # Main function:
-def display_recipes(**inp_dict): 
-    display(widgets.VBox(inp_a))
-    for ii in range(len(inp_a)):
-        if inp_a[ii].value: # get new recipe index if a printed recipe is checked
-            new = random.sample(range(0,len(recipes)),1)[0]
-            if new in r_indices:
-                while new in r_indices:
-                    new = random.sample(range(0,len(recipes)),1)[0]
-            r_indices.append(new)
-            r_names[ii] = list(recipes.keys())[new]
-            inp_a[ii] = widgets.Checkbox(description=list(recipes.keys())[new])
-
-            clear_output()
-
-            print('reshuffling...')
-            list_dict = {jj:r_names[jj] for jj in range(len(r_names))}
-            inp_dict = {list_dict[jj] : inp_a[jj] for jj in range(len(r_names))}  
-            out = widgets.interactive_output(f, inp_dict) 
-            display(out)
-                
-                
 def select_recipes():
     r_names=[] # recipe name
     inp_a = []
@@ -39,6 +18,26 @@ def select_recipes():
 
     list_dict = {ii:r_names[ii] for ii in range(len(r_names))}
 
+    def display_recipes(**inp_dict): 
+        display(widgets.VBox(inp_a))
+        for ii in range(len(inp_a)):
+            if inp_a[ii].value: # get new recipe index if a printed recipe is checked
+                new = random.sample(range(0,len(recipes)),1)[0]
+                if new in r_indices:
+                    while new in r_indices:
+                        new = random.sample(range(0,len(recipes)),1)[0]
+                r_indices.append(new)
+                r_names[ii] = list(recipes.keys())[new]
+                inp_a[ii] = widgets.Checkbox(description=list(recipes.keys())[new])
+    
+                clear_output()
+    
+                print('reshuffling...')
+                list_dict = {jj:r_names[jj] for jj in range(len(r_names))}
+                inp_dict = {list_dict[jj] : inp_a[jj] for jj in range(len(r_names))}  
+                out = widgets.interactive_output(display_recipes, inp_dict) 
+                display(out)
+            
     print("Sounds good? (Select any recipes you don't want to keep):")
     inp_dict = {list_dict[ii] : inp_a[ii] for ii in range(len(r_names))} # call 
     out = widgets.interactive_output(display_recipes, inp_dict) 
@@ -86,6 +85,3 @@ def select_ingredients():
     print('Sounds good? (Select to remove  ingredients)')
     out = widgets.interactive_output(f, inp_dict) 
     widgets.VBox([widgets.VBox(inp_a), out])
-    
-    
-select_recipes()
