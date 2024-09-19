@@ -1,4 +1,3 @@
 import resippy
 
-resippy.select_recipes()
-
+resippy.select_ingredients()
