@@ -4,44 +4,103 @@ from resippy_data import recipes
 import ipywidgets as widgets
 from IPython.display import clear_output
 from IPython.display import display
+from tkinter import *
+from tkinter import ttk
 
 # Main function:
 def select_recipes():
-    r_names=[] # recipe name
-    inp_a = []
+    root = Tk()
+    frm = ttk.Frame(root, padding=10)
+    frm.grid()
+    ttk.Label(frm, text="Sounds good? Select an item to replace it:").grid(column=0, row=0)
 
-    # Gather random recipes:
-    r_indices = random.sample(range(0,len(recipes)),5)
-    for index in r_indices:
-        r_names.append(list(recipes.keys())[index])
-        inp_a.append(widgets.Checkbox(description=list(recipes.keys())[index]))
+    # Copy all recipe names:
+    r_names = list(recipes.keys())
+    r_sample = ['','','','','']
 
-    list_dict = {ii:r_names[ii] for ii in range(len(r_names))}
+    def replace1():
+        new_meal = ttk.Button(frm, text=random.choice(r_names))
+        new_meal.configure(command=replace1)
+        new_meal.grid(column=0, row=1)
+        r_sample[0] = (new_meal['text'])
+        r_names.remove(new_meal['text'])
+        print(new_meal['command'])
+        if len(r_names) == 0:
+            print('all out!')
+            root.destroy()
+    def replace2():
+        new_meal = ttk.Button(frm, text=random.choice(r_names))
+        new_meal.configure(command=replace2)
+        new_meal.grid(column=0, row=2)
+        r_sample[1] = (new_meal['text'])
+        r_names.remove(new_meal['text'])
+        if len(r_names) == 0:
+            print('all out!')
+            root.destroy()
+    def replace3():
+        new_meal = ttk.Button(frm, text=random.choice(r_names))
+        new_meal.configure(command=replace3)
+        new_meal.grid(column=0, row=3)
+        r_sample[2] = (new_meal['text'])
+        r_names.remove(new_meal['text'])
+        if len(r_names) == 0:
+            print('all out!')
+            root.destroy()
+    def replace4():
+        new_meal = ttk.Button(frm, text=random.choice(r_names))
+        new_meal.configure(command=replace4)
+        new_meal.grid(column=0, row=4)
+        r_sample[3] = (new_meal['text'])
+        r_names.remove(new_meal['text'])
+        if len(r_names) == 0:
+            print('all out!')
+            root.destroy()
+    def replace5():
+        new_meal = ttk.Button(frm, text=random.choice(r_names))
+        new_meal.configure(command=replace5)
+        new_meal.grid(column=0, row=5)
+        r_sample[4] = (new_meal['text'])
+        r_names.remove(new_meal['text'])
+        if len(r_names) == 0:
+            print('all out!')
+            root.destroy()
 
-    def display_recipes(**inp_dict): 
-        display(widgets.VBox(inp_a))
-        for ii in range(len(inp_a)):
-            if inp_a[ii].value: # get new recipe index if a printed recipe is checked
-                new = random.sample(range(0,len(recipes)),1)[0]
-                if new in r_indices:
-                    while new in r_indices:
-                        new = random.sample(range(0,len(recipes)),1)[0]
-                r_indices.append(new)
-                r_names[ii] = list(recipes.keys())[new]
-                inp_a[ii] = widgets.Checkbox(description=list(recipes.keys())[new])
-    
-                clear_output()
-    
-                print('reshuffling...')
-                list_dict = {jj:r_names[jj] for jj in range(len(r_names))}
-                inp_dict = {list_dict[jj] : inp_a[jj] for jj in range(len(r_names))}  
-                out = widgets.interactive_output(display_recipes, inp_dict) 
-                display(out)
-            
-    print("Sounds good? (Select any recipes you don't want to keep):")
-    inp_dict = {list_dict[ii] : inp_a[ii] for ii in range(len(r_names))} # call 
-    out = widgets.interactive_output(display_recipes, inp_dict) 
-    display(out)
+    meal1 =  ttk.Button(frm, text=random.choice(r_names))
+    meal1.configure(command=replace1)
+    meal1.grid(column=0, row=1)
+    r_sample[0] = (meal1['text'])
+    r_names.remove(meal1['text'])
+    print(meal1.configure().keys())
+    print(meal1['state'])
+
+    meal2 =  ttk.Button(frm, text=random.choice(r_names))
+    meal2.configure(command=replace2)
+    meal2.grid(column=0, row=2)
+    r_sample[1] = (meal2['text'])
+    r_names.remove(meal2['text'])
+
+    meal3 =  ttk.Button(frm, text=random.choice(r_names))
+    meal3.configure(command=replace3)
+    meal3.grid(column=0, row=3)
+    r_sample[2] = (meal3['text'])
+    r_names.remove(meal3['text'])
+
+    meal4 =  ttk.Button(frm, text=random.choice(r_names))
+    meal4.configure(command=replace4)
+    meal4.grid(column=0, row=4)
+    r_sample[3] = (meal4['text'])
+    r_names.remove(meal4['text'])
+
+    meal5 =  ttk.Button(frm, text=random.choice(r_names))
+    meal5.configure(command=replace5)
+    meal5.grid(column=0, row=5)
+    r_sample[4] = (meal5['text'])
+    r_names.remove(meal5['text'])
+
+    opt_quit = ttk.Button(frm, text="Sounds good!", command=root.destroy).grid(column=0, row=6)
+    root.mainloop()
+
+    return r_sample
 
 def gather_ingredients():
     g_name=[]  # ingredient name
