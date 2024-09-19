@@ -1,14 +1,13 @@
 import numpy as np
 import random
 from resippy_data import recipes
-import ipywidgets as widgets
-from IPython.display import clear_output
-from IPython.display import display
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
 # Main function:
 def select_recipes():
+    # Initiate tkinter
     root = Tk()
     frm = ttk.Frame(root, padding=10)
     frm.grid()
@@ -18,6 +17,8 @@ def select_recipes():
     r_names = list(recipes.keys())
     r_sample = ['','','','','']
 
+    # Initiate replacement functions for all five meals:
+    # **doesn't seem to be a more efficient method without crashing the program :(
     def replace1():
         new_meal = ttk.Button(frm, text=random.choice(r_names))
         new_meal.configure(command=replace1)
@@ -26,7 +27,7 @@ def select_recipes():
         r_names.remove(new_meal['text'])
         print(new_meal['command'])
         if len(r_names) == 0:
-            print('all out!')
+            print('All out! Lower your standards...')
             root.destroy()
     def replace2():
         new_meal = ttk.Button(frm, text=random.choice(r_names))
@@ -35,7 +36,7 @@ def select_recipes():
         r_sample[1] = (new_meal['text'])
         r_names.remove(new_meal['text'])
         if len(r_names) == 0:
-            print('all out!')
+            print('All out! Lower your standards...')
             root.destroy()
     def replace3():
         new_meal = ttk.Button(frm, text=random.choice(r_names))
@@ -44,7 +45,7 @@ def select_recipes():
         r_sample[2] = (new_meal['text'])
         r_names.remove(new_meal['text'])
         if len(r_names) == 0:
-            print('all out!')
+            print('All out! Lower your standards...')
             root.destroy()
     def replace4():
         new_meal = ttk.Button(frm, text=random.choice(r_names))
@@ -53,7 +54,7 @@ def select_recipes():
         r_sample[3] = (new_meal['text'])
         r_names.remove(new_meal['text'])
         if len(r_names) == 0:
-            print('all out!')
+            print('All out! Lower your standards...')
             root.destroy()
     def replace5():
         new_meal = ttk.Button(frm, text=random.choice(r_names))
@@ -65,6 +66,7 @@ def select_recipes():
             print('All out! Lower your standards...')
             root.destroy()
 
+    # Create buttons for all five meals:
     meal1 =  ttk.Button(frm, text=random.choice(r_names))
     meal1.configure(command=replace1)
     meal1.grid(column=0, row=1)
@@ -95,6 +97,7 @@ def select_recipes():
     r_sample[4] = (meal5['text'])
     r_names.remove(meal5['text'])
 
+    # Quit button
     opt_quit = ttk.Button(frm, text="Sounds good!", command=root.destroy).grid(column=0, row=6)
     root.mainloop()
 
@@ -118,32 +121,44 @@ def gather_ingredients():
                 g_amt.append(recipes[r_name][item])
                 g_name.append(item)
 
-    print('\nIngredients:')
-    # Print final list:
-    for ii in range(len(g_name)):
-        print(g_amt[ii],g_name[ii])
-
     return (g_amt, g_name)
         
 def select_ingredients():
+    # Call ingredients:
     g_amt, g_name = gather_ingredients()
-    list_dict = {ii:str(g_amt[ii]) + ' ' + g_name[ii] for ii in range(len(g_amt))}
-    inp_a = []
-    for n in list_dict:
-        inp_a.append(widgets.Checkbox(description=list_dict[n]))
 
-    s_list=[]
-    def f(**inp_dict): 
-        for ii in range(len(inp_a)):
-            if not inp_a[ii].value:
-                if str(g_amt[ii]) + ' ' + g_name[ii] not in s_list:
-                    s_list.append(str(g_amt[ii]) + ' ' + g_name[ii])
-            else:
-                if str(g_amt[ii]) + ' ' + g_name[ii] in s_list:
-                    s_list.remove(str(g_amt[ii]) + ' ' + g_name[ii])
-        print(s_list)
+    # Initiate tkinter:
+    root = Tk()
+    frm = ttk.Frame(root, padding=10)
+    frm.grid()
+    ttk.Label(frm, text="Sounds good? Select an ingredient to add to shopping list:").grid(column=0, row=0)
+    checkboxes = {} # Keeps track of multiple buttons and their bool values
 
-    inp_dict = {list_dict[ii] : inp_a[ii] for ii in range(len(g_amt))}
-    print('Sounds good? (Select to remove  ingredients)')
-    out = widgets.interactive_output(f, inp_dict) 
-    widgets.VBox([widgets.VBox(inp_a), out])
+    # Function to finalize options and close root:
+    def finalize_list():
+        selected_ingredients = []
+        for option, data in checkboxes.items():
+            if data['var'].get(): # Keep all True values
+                selected_ingredients.append(option)
+        return selected_ingredients
+
+    # Build checklist of ingredients:
+    for _ in range(len(g_name)):
+        var = BooleanVar()
+        g = ttk.Checkbutton(frm, text=str(g_amt[_])+' '+g_name[_], onvalue=1, offvalue=0)
+        g.configure(variable = var)
+        g.grid(column=0, row=_+1)
+        checkboxes[str(g_amt[_])+' '+g_name[_]] = {'var': var, 'g': g}
+
+    # Close list:
+    quit_button = ttk.Button(frm, text="Sounds good!", command=root.destroy).grid(column=0, row=len(g_name)+3)
+    root.mainloop()
+
+    # Call final list:
+    selected_ingredients = finalize_list()
+    print(selected_ingredients)
+
+    with open('shopping_list.txt', 'w') as f:
+        for line in selected_ingredients:
+            f.write(line)
+            f.write('\n')
