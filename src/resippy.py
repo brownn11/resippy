@@ -62,7 +62,7 @@ def select_recipes():
         r_sample[4] = (new_meal['text'])
         r_names.remove(new_meal['text'])
         if len(r_names) == 0:
-            print('all out!')
+            print('All out! Lower your standards...')
             root.destroy()
 
     meal1 =  ttk.Button(frm, text=random.choice(r_names))
@@ -70,8 +70,6 @@ def select_recipes():
     meal1.grid(column=0, row=1)
     r_sample[0] = (meal1['text'])
     r_names.remove(meal1['text'])
-    print(meal1.configure().keys())
-    print(meal1['state'])
 
     meal2 =  ttk.Button(frm, text=random.choice(r_names))
     meal2.configure(command=replace2)
@@ -106,9 +104,11 @@ def gather_ingredients():
     g_name=[]  # ingredient name
     g_amt=[]   # ingredient amt
 
+    r_sample = select_recipes()
+
     # Gather ingredients and amounts:
     print('Finalized meal list:')
-    for r_name in r_names:
+    for r_name in r_sample:
         print('-->',r_name)
         for item in recipes[r_name]:
             if item in g_name:
@@ -122,8 +122,11 @@ def gather_ingredients():
     # Print final list:
     for ii in range(len(g_name)):
         print(g_amt[ii],g_name[ii])
+
+    return (g_amt, g_name)
         
 def select_ingredients():
+    g_amt, g_name = gather_ingredients()
     list_dict = {ii:str(g_amt[ii]) + ' ' + g_name[ii] for ii in range(len(g_amt))}
     inp_a = []
     for n in list_dict:
